@@ -1,4 +1,6 @@
-#!/Users/lemon/Python-Projects/Tic/venv/bin/python
+#!/bin/sh
+'''exec' "/Users/lemon/Documents/Code Files/TicTacToe_AI_ML/venv/bin/python" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys

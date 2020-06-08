@@ -20,8 +20,6 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-1
-
 global colour
 colour = BLACK
 click_loop = 0
