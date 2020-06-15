@@ -1,3 +1,13 @@
+"""
+
+Made by Beaumont Spinks
+Hosted on Github on BasicSyntax
+
+Made 15 June 2020
+Using Python and PyGame
+
+"""
+
 import pygame
 import random
 import sys
@@ -23,7 +33,12 @@ BLUE = (0, 0, 255)
 colour = WHITE
 click_loop = 0
 click = False
-b = [' ' for _ in range(10)]
+game_state = False
+turn = 0
+run = False
+winner = 0
+blank_board = [' ' for _ in range(10)]
+b = blank_board[:]
 screenWidth = 900
 screenHeight = 900
 win = pygame.display.set_mode((screenWidth, screenHeight))
@@ -41,15 +56,17 @@ class Tiles(object):
     def draw_grid(self):
         win.blit(self.grid, self.rect)
 
-    def draw_x(self):
+    def draw(self, move):
         if self.clicked is False:
-            win.blit(self.x, self.rect)
-        self.clicked = True
-
-    def draw_o(self):
-        if self.clicked is False:
-            win.blit(self.o, self.rect)
-        self.clicked = True
+            if move == 'X':
+                win.blit(self.x, self.rect)
+            elif move == 'O':
+                win.blit(self.o, self.rect)
+            else:
+                print('wrong move passed to tile !')
+            self.clicked = True
+        else:
+            print('tile is already clicked')
 
 
 def draw_text(t, f, c, s, x, y):
@@ -59,37 +76,52 @@ def draw_text(t, f, c, s, x, y):
     s.blit(text_obj, text_rect)
 
 
-def play_move():
+def play_move(move):
+    c = b[:]
     if 360 >= pygame.mouse.get_pos()[0]:
         if 360 >= pygame.mouse.get_pos()[1]:
-            T1.draw_x()
-            b[1] = 'X'
+            if not T1.clicked:
+                T1.draw(move)
+                b[1] = move
         elif 540 >= pygame.mouse.get_pos()[1] >= 360:
-            T2.draw_x()
-            b[2] = 'X'
+            if not T2.clicked:
+                T2.draw(move)
+                b[2] = move
         else:
-            T3.draw_x()
-            b[3] = 'X'
+            if not T3.clicked:
+                T3.draw(move)
+                b[3] = move
     elif 540 >= pygame.mouse.get_pos()[0] >= 360:
         if 360 >= pygame.mouse.get_pos()[1]:
-            T4.draw_x()
-            b[4] = 'X'
+            if not T4.clicked:
+                T4.draw(move)
+                b[4] = move
         elif 540 >= pygame.mouse.get_pos()[1] >= 360:
-            T5.draw_x()
-            b[5] = 'X'
+            if not T5.clicked:
+                T5.draw(move)
+                b[5] = move
         else:
-            T6.draw_x()
-            b[6] = 'X'
+            if not T6.clicked:
+                T6.draw(move)
+                b[6] = move
     else:
         if 360 >= pygame.mouse.get_pos()[1]:
-            T7.draw_x()
-            b[7] = 'X'
+            if not T7.clicked:
+                T7.draw(move)
+                b[7] = move
         elif 540 >= pygame.mouse.get_pos()[1] >= 360:
-            T8.draw_x()
-            b[8] = 'X'
+            if not T8.clicked:
+                T8.draw(move)
+                b[8] = move
         else:
-            T9.draw_x()
-            b[9] = 'X'
+            if not T9.clicked:
+                T9.draw(move)
+                b[9] = move
+
+    if c == b:
+        return False
+    else:
+        return True
 
 
 def comp_move():
@@ -102,26 +134,34 @@ def comp_move():
             if is_winner(board_copy, let):
                 move = i
                 if move == 1:
-                    T1.draw_o()
+                    if not T1.clicked:
+                        T1.draw('O')
                 elif move == 3:
-                    T3.draw_o()
+                    if not T3.clicked:
+                        T3.draw('O')
                 elif move == 7:
-                    T7.draw_o()
+                    if not T7.clicked:
+                        T7.draw('O')
                 elif move == 9:
-                    T9.draw_o()
+                    if not T9.clicked:
+                        T9.draw('O')
                 elif move == 2:
-                    T2.draw_o()
+                    if not T2.clicked:
+                        T2.draw('O')
                 elif move == 4:
-                    T4.draw_o()
+                    if not T4.clicked:
+                        T4.draw('O')
                 elif move == 6:
-                    T6.draw_o()
+                    if not T6.clicked:
+                        T6.draw('O')
                 else:
-                    T8.draw_o()
+                    if not T8.clicked:
+                        T8.draw('O')
                 return move
 
     if 5 in possible_moves:
         move = 5
-        T5.draw_o()
+        T5.draw('O')
         return move
 
     corners_open = []
@@ -133,13 +173,13 @@ def comp_move():
     if len(corners_open) >= 1:
         move = corners_open[random.randrange(0, (len(corners_open)))]
         if move == 1:
-            T1.draw_o()
+            T1.draw('O')
         elif move == 3:
-            T3.draw_o()
+            T3.draw('O')
         elif move == 7:
-            T7.draw_o()
+            T7.draw('O')
         else:
-            T9.draw_o()
+            T9.draw('O')
         return move
 
     edges_open = []
@@ -152,13 +192,13 @@ def comp_move():
         move = corners_open[random.randrange(0, (len(corners_open)))]
 
     if move == 2:
-        T2.draw_o()
+        T2.draw('O')
     elif move == 4:
-        T4.draw_o()
+        T4.draw('O')
     elif move == 6:
-        T6.draw_o()
+        T6.draw('O')
     else:
-        T8.draw_o()
+        T8.draw('O')
     return move
 
 
@@ -173,16 +213,49 @@ def is_winner(bo, le):
             (bo[3] == le and bo[5] == le and bo[7] == le))
 
 
-# def draw_game():
-#     T1.draw_grid()
-#     T2.draw_grid()
-#     T3.draw_grid()
-#     T4.draw_grid()
-#     T5.draw_grid()
-#     T6.draw_grid()
-#     T7.draw_grid()
-#     T8.draw_grid()
-#     T9.draw_grid()
+def game_over():
+    global game_state
+
+    game_state = False
+    T1.clicked = True
+    T2.clicked = True
+    T3.clicked = True
+    T4.clicked = True
+    T5.clicked = True
+    T6.clicked = True
+    T7.clicked = True
+    T8.clicked = True
+    T9.clicked = True
+
+
+def game_restart():
+    global click
+    global click_loop
+    global b
+    global game_state
+    global turn
+    global run
+    global winner
+
+    win.fill(colour)
+    game_state = True
+    click = False
+    click_loop = 0
+    run = True
+    turn = 1
+    winner = 0
+    b = blank_board[:]
+
+    T1.clicked = False
+    T2.clicked = False
+    T3.clicked = False
+    T4.clicked = False
+    T5.clicked = False
+    T6.clicked = False
+    T7.clicked = False
+    T8.clicked = False
+    T9.clicked = False
+
 
 T1 = Tiles((180, 180))
 T2 = Tiles((180, 360))
@@ -212,8 +285,12 @@ def main_menu():
 
         if colour == BLACK:
             draw_text('Main Menu', h1_font, WHITE, win, 20, 20)
+            draw_text('Bckspc to go back', font, WHITE, win, 20, 360)
+            draw_text('Esc to quit', font, WHITE, win, 20, 540)
         else:
             draw_text('Main Menu', h1_font, BLACK, win, 20, 20)
+            draw_text('Bckspc to go back', font, BLACK, win, 20, 360)
+            draw_text('Esc to quit', font, BLACK, win, 20, 540)
 
         draw_text('2 player', font, BLACK, win, 100, 150)
         draw_text('vs computer', font, BLACK, win, 250, 150)
@@ -251,92 +328,86 @@ def main_menu():
 
 
 def game_vs_player():
-    global colour
-    global b
-    run = True
-    b = [' ' for _ in range(10)]
-    win.fill(colour)
-
-    def draw():
-        if colour == BLACK:
-            draw_text('2 player', h1_font, WHITE, win, 20, 20)
-            grid = pygame.image.load('images/grid_640+360_white.png')
-        else:
-            draw_text('2 player', h1_font, BLACK, win, 20, 20)
-            grid = pygame.image.load('images/grid_640+360.png')
-
-        win.blit(grid, (0, 0))
-
-    while run:
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-                elif event.key == pygame.K_BACKSPACE:
-                    run = False
-
-        draw()
-        pygame.display.update()
-        clock.tick(30)
-
-
-def game_vs_comp():
     global click_loop
     global colour
     global b
     global click
-    run = True
-    click = False
-    click_loop = 1
-    b = [' ' for _ in range(10)]
+    global game_state
+    global winner
+    global turn
+    global run
 
-    tile1 = pygame.Rect(180, 180, 180, 180)
-    tile2 = pygame.Rect(180, 360, 180, 180)
+    board_space = pygame.Rect(180, 180, 540, 540)
+    reset_button = pygame.Rect(780, 100, 100, 40)
 
-    win.fill(colour)
+    game_restart()
 
-    def draw():
+    def draw(text):
+        pygame.draw.rect(win, (0, 255, 0), reset_button)
+
         if colour == BLACK:
             grid = pygame.image.load('images/grid_640+360_white.png')
-            draw_text('comp game', h1_font, WHITE, win, 20, 20)
+            draw_text(text, h1_font, WHITE, win, 20, 20)
+            draw_text('Reset Game', font, WHITE, win, 780, 100)
+            draw_text('Bckspc to go back', font, WHITE, win, 20, 360)
+            draw_text('Esc to quit', font, WHITE, win, 20, 540)
         else:
             grid = pygame.image.load('images/grid_640+360.png')
-            draw_text('comp game', h1_font, BLACK, win, 20, 20)
+            draw_text(text, h1_font, BLACK, win, 20, 20)
+            draw_text('Reset Game', font, BLACK, win, 780, 100)
+            draw_text('Bckspc to go back', font, BLACK, win, 20, 360)
+            draw_text('Esc to quit', font, BLACK, win, 20, 540)
+
+        if not game_state:
+            if winner == 0:
+                if colour == BLACK:
+                    draw_text('Game Over : Tie Game', h1_font, WHITE, win, 200, 100)
+                else:
+                    draw_text('Game Over : Tie Game', h1_font, BLACK, win, 200, 100)
+            elif winner == 1:
+                draw_text('Player One Wins !', h1_font, BLUE, win, 200, 100)
+            elif winner == 2:
+                draw_text('Player Two Wins !', h1_font, BLUE, win, 200, 100)
+        # elif game_state:
+        #     draw_text('Running: Player ' + str(turn) + '\'s turn !', h1_font, BLUE, win, 200, 100)
 
         win.blit(grid, (0, 0))
 
     while run:
         cgx, cgy = pygame.mouse.get_pos()
 
-        if pygame.mouse.get_pressed()[0] and click_loop == 0:
-            print('clicked')
-            play_move()
-            if b.count(' ') > 1:
-                print('computer moved')
-                m = comp_move()
-                b[m] = 'O'
-                if is_winner(b, 'O'):
-                    print('Sorry, O\'s won this time!')
-                elif is_winner(b, 'X'):
-                    print('X\'s won this time! Good Job!')
-            else:
-                print('Tie Game!')
-            click_loop = 1
-            print(b)
+        if reset_button.collidepoint(cgx, cgy):
+            if click:
+                game_restart()
 
-        # if tile1.collidepoint(cgx, cgy):
-        #     if click:
-        #         print('T1 click')
-        #         T1.draw_x()
-        # if tile2.collidepoint(cgx, cgy):
-        #     if click:
-        #         print('T2 click')
-        #         T2.draw_x()
+        if board_space.collidepoint(cgx, cgy) and click_loop == 0:
+            if click:
+                move = 'O'
+
+                if turn == 1:
+                    move = 'X'
+                    turn = 2
+                elif turn == 2:
+                    move = 'O'
+                    turn = 1
+
+                allow_move = play_move(move)
+
+                if allow_move:
+                    if b.count(' ') > 1:
+                        if is_winner(b, 'O'):
+                            print('Sorry, O\'s won this time!')
+                            game_over()
+                            winner = 2
+                        elif is_winner(b, 'X'):
+                            print('X\'s won this time! Good Job!')
+                            game_over()
+                            winner = 1
+                    else:
+                        print('Tie Game!')
+                        game_over()
+                        winner = 0
+                click_loop = 1
 
         click = False
         for event in pygame.event.get():
@@ -353,7 +424,106 @@ def game_vs_comp():
                 if event.button == 1:
                     click = True
 
-        draw()
+        draw('2 Player Mode')
+        pygame.display.update()
+        clock.tick(30)
+
+        if click_loop >= 1:
+            click_loop += 1
+        if click_loop > 8:
+            click_loop = 0
+
+
+def game_vs_comp():
+    global click_loop
+    global colour
+    global b
+    global click
+    global game_state
+    global winner
+    global turn
+    global run
+
+    board_space = pygame.Rect(180, 180, 540, 540)
+    reset_button = pygame.Rect(780, 100, 100, 40)
+
+    game_restart()
+
+    def draw(text):
+        pygame.draw.rect(win, (0, 255, 0), reset_button)
+
+        if colour == BLACK:
+            grid = pygame.image.load('images/grid_640+360_white.png')
+            draw_text(text, h1_font, WHITE, win, 20, 20)
+            draw_text('Reset Game', font, WHITE, win, 780, 100)
+            draw_text('Bckspc to go back', font, WHITE, win, 20, 360)
+            draw_text('Esc to quit', font, WHITE, win, 20, 540)
+        else:
+            grid = pygame.image.load('images/grid_640+360.png')
+            draw_text(text, h1_font, BLACK, win, 20, 20)
+            draw_text('Reset Game', font, BLACK, win, 780, 100)
+            draw_text('Bckspc to go back', font, BLACK, win, 20, 360)
+            draw_text('Esc to quit', font, BLACK, win, 20, 540)
+
+        if not game_state:
+            if winner == 0:
+                if colour == BLACK:
+                    draw_text('Game Over : Tie Game', h1_font, WHITE, win, 200, 100)
+                else:
+                    draw_text('Game Over : Tie Game', h1_font, BLACK, win, 200, 100)
+            elif winner == 1:
+                draw_text('You are the winner !', h1_font, BLUE, win, 200, 100)
+            elif winner == 2:
+                draw_text('Game Over : You Lose', h1_font, RED, win, 200, 100)
+        # elif game_state:
+        #     draw_text('Game Running', h1_font, BLUE, win, 200, 100)
+
+        win.blit(grid, (0, 0))
+
+    while run:
+        cgx, cgy = pygame.mouse.get_pos()
+
+        if reset_button.collidepoint(cgx, cgy):
+            if click:
+                game_restart()
+
+        if board_space.collidepoint(cgx, cgy) and click_loop == 0:
+            if click:
+                allow_move = play_move('X')
+                if allow_move:
+                    if b.count(' ') > 1:
+                        m = comp_move()
+                        b[m] = 'O'
+                        if is_winner(b, 'O'):
+                            print('Sorry, O\'s won this time!')
+                            game_over()
+                            winner = 2
+                        elif is_winner(b, 'X'):
+                            print('X\'s won this time! Good Job!')
+                            game_over()
+                            winner = 1
+                    else:
+                        print('Tie Game!')
+                        game_over()
+                        winner = 0
+                click_loop = 1
+
+        click = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == pygame.K_BACKSPACE:
+                    run = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        draw('Comp Game')
         pygame.display.update()
         clock.tick(30)
 
@@ -366,6 +536,8 @@ def game_vs_comp():
 def options():
     global click
     global colour
+    global run
+
     run = True
     click = False
 
@@ -386,9 +558,13 @@ def options():
         if colour == BLACK:
             draw_text('Options Menu', font, WHITE, win, 20, 20)
             draw_text('Pick your background colour!', font, WHITE, win, 80, 80)
+            draw_text('Bckspc to go back', font, WHITE, win, 20, 360)
+            draw_text('Esc to quit', font, WHITE, win, 20, 540)
         else:
             draw_text('Options Menu', font, BLACK, win, 20, 20)
             draw_text('Pick your background colour!', font, BLACK, win, 80, 80)
+            draw_text('Bckspc to go back', font, BLACK, win, 20, 360)
+            draw_text('Esc to quit', font, BLACK, win, 20, 540)
 
         pygame.draw.rect(win, BLACK, bt_1)
         pygame.draw.rect(win, WHITE, bt_2)
